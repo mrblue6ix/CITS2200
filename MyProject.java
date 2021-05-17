@@ -1,4 +1,5 @@
 // Jordan Mossammaparast (22774949)
+// Stanley McFarlane (22724248)
 
 public class MyProject implements Project {
 	
