@@ -32,14 +32,41 @@ public class MyProject implements Project {
 
     public int numPaths(int[][] adjlist, int src, int dst) {
         // TODO
+        //Useful link: https://algorithms.tutorialhorizon.com/graph-count-all-paths-between-source-and-destination/
         return 0;
     }
 
-    public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) {
-        // TODO
-        short[] og = addrs[src]; //getting the ip address of the source
+    public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) { //use BFS?
+        short[] source = addrs[src]; //getting the ip address of the source
+        int hops = 0; //hop count
+        int[] hopCounts = new int[queries.length]; //array of all hop counts
 
-        return null;
+        for(int i = 0; i < queries.length; i++){ //for each query
+            //go from source to the query subnet
+            short[] source = addrs[src]; //getting the ip address of the source
+            short[] query = queries[i]; //get current query
+            int[] adjacency = adjlist[src]; //set adjacency to adjlist of src
+            int sameCount = 0;
+
+            for(int j = 0; j < query.length; j++){
+                if(source[j] == query[j]){
+                    sameCount++; //keep count of how many numbers are the same in source and query
+                }
+            }
+
+            if(sameCount == query.length){ //if same count contains all of query then hops = 0
+                hops = 0;
+                hopCounts[i] = hops;
+            }
+            else{ //executed if source is not already in queried subnet
+                for(int k = 0; k < adjacency.length; k++){
+                    source = addrs[adjacency[k]]; //move source to the next item in adjacency
+                    hops++; //increment hops
+                }
+            }
+        }
+
+        return hopCounts;
     }
 
     public int maxDownloadSpeed(int[][] adjlist, int[][] speeds, int src, int dst) {
