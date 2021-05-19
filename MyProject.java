@@ -18,7 +18,7 @@ public class MyProject implements Project {
         boolean[] visited = new boolean[adjlist.length];
         LinkedList<Integer> q = new LinkedList<Integer>();
         int source = 0;
-        q.add(0);
+        q.add(source);
 
         while(!q.isEmpty()){
             //add whats on the queue to the visited array
@@ -26,15 +26,34 @@ public class MyProject implements Project {
             //keep repeating until you've checked adjlist for all elements
             //if all elements of visited array are true then all devices are connected (return true)
             //if not then all devices are not connected (return false)
+            int item = q.getFirst();
+            visited[item] = true;
+            for(int i = 0; i < adjlist[item].length; i++){
+                int[] neighbours = adjlist[item];
+                if(!visited[neighbours[i]]){
+                    q.add(neighbours[i]);
+                }
+            }
+            q.remove();
         }
-
+        for(boolean visit : visited){
+            if(!visit){
+                return false;
+            }
+        }
         return true;
     }
-
+    /*
+    This function determines the different paths a packet can take in a network to get from transmitting device to receiving device
+     * @param adjlist the structure of the network
+     * @param src the device id of the transmitting device
+     * @param dst the device id of the receiving device
+     * @return the number of possible paths that the packet may take
+     */
     public int numPaths(int[][] adjlist, int src, int dst) {
-        paths = 0;
-        boolean[] visited = new boolean[adjlist.length];
-        printPath(src, dst, visited, adjlist);
+        paths = 0; //reset global paths variable to 0 on each call to numPaths
+        boolean[] visited = new boolean[adjlist.length]; //creating new boolean array to keep track of which vertices have been visited
+        printPath(src, dst, visited, adjlist); //calls helper function to do the actual work 
         int ans = paths;
 
         return ans;
@@ -51,41 +70,11 @@ public class MyProject implements Project {
                 printPath(j, dst, visited, adjlist);
             }
         }
-        //mark current vertex as false
         visited[src] = false;
     }
 
     public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) { //use BFS?
-        short[] source = addrs[src]; //getting the ip address of the source
-        int hops = 0; //hop count
-        int[] hopCounts = new int[queries.length]; //array of all hop counts
-
-        for(int i = 0; i < queries.length; i++){ //for each query
-            //go from source to the query subnet
-            source = addrs[src]; //getting the ip address of the source
-            short[] query = queries[i]; //get current query
-            int[] adjacency = adjlist[src]; //set adjacency to adjlist of src
-            int sameCount = 0;
-
-            for(int j = 0; j < query.length; j++){
-                if(source[j] == query[j]){
-                    sameCount++; //keep count of how many numbers are the same in source and query
-                }
-            }
-
-            if(sameCount == query.length){ //if same count contains all of query then hops = 0
-                hops = 0;
-                hopCounts[i] = hops;
-            }
-            else{ //executed if source is not already in queried subnet
-                for(int k = 0; k < adjacency.length; k++){
-                    source = addrs[adjacency[k]]; //move source to the next item in adjacency
-                    hops++; //increment hops
-                }
-            }
-        }
-
-        return hopCounts;
+        return null;
     }
 
     public int maxDownloadSpeed(int[][] adjlist, int[][] speeds, int src, int dst) {
@@ -97,51 +86,6 @@ public class MyProject implements Project {
 		// TODO Auto-generated method stub
         MyProject project = new MyProject();
 
-        int[][] adjlist1 = new int[][] {
-            { 1 },
-            { 0 },
-        };
-        int y = project.numPaths(adjlist1, 0, 1);
-        System.out.println("y: " + y); //1
-
-        int[][] adjlist2 = new int[][] {
-            { 1, 2 },
-            { 0, 3 },
-            { 0, 3 },
-            { 1, 2 },
-        };
-        int z = project.numPaths(adjlist2, 0, 3);
-        System.out.println("z: "+ z); //2
-
-        int[][] adjlist = new int[][] {
-            { 1, 2 },
-            { 0, 2 },
-            { },
-            { 1, 2 },
-        };
-
-        int a = project.numPaths(adjlist, 0, 3);
-        System.out.println("a: "+ a); //0
-
-        adjlist = new int[][] {
-            { 1, 2 },
-            { 0, 3 },
-            { 0, 3 },
-            { 1, 2 },
-        };
-
-        int b = project.numPaths(adjlist, 0, 0);
-        System.out.println("b: "+ b); //1
-
-        adjlist = new int[][] {
-            { 0 },
-            { 0, 3 },
-            { 0, 3 },
-            { 1, 2 },
-        };
-
-        int c = project.numPaths(adjlist, 0, 3);
-        System.out.println("c: " + c); //0
 	}
 
 }
