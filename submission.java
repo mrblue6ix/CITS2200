@@ -1,5 +1,4 @@
-// Jordan Mossammaparast (22774949)
-// Stanley McFarlane (22724248)
+// Jordan Mossammaparast (22774949), Stanley McFarlane (22724248)
 
 import java.util.*;
 
