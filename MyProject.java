@@ -32,6 +32,7 @@ public class MyProject implements Project {
     }
 
     public int numPaths(int[][] adjlist, int src, int dst) {
+        //works for the first example test
         // TODO
         //Useful link: https://algorithms.tutorialhorizon.com/graph-count-all-paths-between-source-and-destination/
         //int numPaths = 0;
