@@ -4,7 +4,7 @@
 import java.util.*;
 
 public class MyProject implements Project {
-    int numPaths = 0;
+    int paths = 0;
 	
 	public MyProject() {
 		//TODO constructor
@@ -32,27 +32,27 @@ public class MyProject implements Project {
     }
 
     public int numPaths(int[][] adjlist, int src, int dst) {
-        // TODO
-        //Useful link: https://algorithms.tutorialhorizon.com/graph-count-all-paths-between-source-and-destination/
-        //int numPaths = 0;
+        paths = 0;
+        boolean[] visited = new boolean[adjlist.length];
+        printPath(src, dst, visited, adjlist);
+        int ans = paths;
 
-        return countPaths(adjlist, src, dst);
+        return ans;
     }
-    public int countPaths(int[][] adjlist, int src, int dst){
-
-        if (src == dst) {
-            numPaths++;
-            System.out.println("num: " + numPaths);
+    private void printPath(int src, int dst, boolean[] visited, int[][] adjlist){
+        if(src == dst){
+            paths++;
+            return;
         }
-        else{
-            for (int i = 0; i < adjlist[src].length; i++) {
-                int ajdacentVertex = adjlist[src][i];
-                System.out.println("adj: " + ajdacentVertex);
-                System.out.println("dst: " + dst);
-                countPaths(adjlist, ajdacentVertex, dst);
+        visited[src] = true;
+        for(int i = 0; i < adjlist[src].length; i++){
+            int j = adjlist[src][i];
+            if (!visited[j]) {
+                printPath(j, dst, visited, adjlist);
             }
         }
-        return numPaths;
+        //mark current vertex as false
+        visited[src] = false;
     }
 
     public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) { //use BFS?
@@ -95,36 +95,14 @@ public class MyProject implements Project {
     
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
-        System.out.println("soosk");
-
-        //below is a test for closestInSubnet()
-        int[][] adjlist = new int[][] {
-            { 1 },
-            { 0 },
-        };
-
-        short[][] addrs = new short[][] {
-            { 10, 1, 1, 1 },
-            { 10, 1, 2, 1 },
-        };
-
-        short[][] queries = new short[][] {
-            { 10, 1, 1 },
-            { 10, 1, 2 },
-            { 10, 1 },
-            { 10, 2 },
-        };
         MyProject project = new MyProject();
-        int[] x = project.closestInSubnet(adjlist, addrs, 0, queries);
-        //Expected answer = 0, 1, 0, Integer.MAX_VALUE
 
         int[][] adjlist1 = new int[][] {
             { 1 },
             { 0 },
         };
         int y = project.numPaths(adjlist1, 0, 1);
-        System.out.println(y);
+        System.out.println("y: " + y); //1
 
         int[][] adjlist2 = new int[][] {
             { 1, 2 },
@@ -133,7 +111,37 @@ public class MyProject implements Project {
             { 1, 2 },
         };
         int z = project.numPaths(adjlist2, 0, 3);
-        System.out.println("z: "+ z);
+        System.out.println("z: "+ z); //2
+
+        int[][] adjlist = new int[][] {
+            { 1, 2 },
+            { 0, 2 },
+            { },
+            { 1, 2 },
+        };
+
+        int a = project.numPaths(adjlist, 0, 3);
+        System.out.println("a: "+ a); //0
+
+        adjlist = new int[][] {
+            { 1, 2 },
+            { 0, 3 },
+            { 0, 3 },
+            { 1, 2 },
+        };
+
+        int b = project.numPaths(adjlist, 0, 0);
+        System.out.println("b: "+ b); //1
+
+        adjlist = new int[][] {
+            { 0 },
+            { 0, 3 },
+            { 0, 3 },
+            { 1, 2 },
+        };
+
+        int c = project.numPaths(adjlist, 0, 3);
+        System.out.println("c: " + c); //0
 	}
 
 }
