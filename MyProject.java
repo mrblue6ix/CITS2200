@@ -4,6 +4,7 @@
 import java.util.*;
 
 public class MyProject implements Project {
+    int numPaths = 0;
 	
 	public MyProject() {
 		//TODO constructor
@@ -33,7 +34,25 @@ public class MyProject implements Project {
     public int numPaths(int[][] adjlist, int src, int dst) {
         // TODO
         //Useful link: https://algorithms.tutorialhorizon.com/graph-count-all-paths-between-source-and-destination/
-        return 0;
+        //int numPaths = 0;
+
+        return countPaths(adjlist, src, dst);
+    }
+    public int countPaths(int[][] adjlist, int src, int dst){
+
+        if (src == dst) {
+            numPaths++;
+            System.out.println("num: " + numPaths);
+        }
+        else{
+            for (int i = 0; i < adjlist[src].length; i++) {
+                int ajdacentVertex = adjlist[src][i];
+                System.out.println("adj: " + ajdacentVertex);
+                System.out.println("dst: " + dst);
+                countPaths(adjlist, ajdacentVertex, dst);
+            }
+        }
+        return numPaths;
     }
 
     public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) { //use BFS?
@@ -43,7 +62,7 @@ public class MyProject implements Project {
 
         for(int i = 0; i < queries.length; i++){ //for each query
             //go from source to the query subnet
-            short[] source = addrs[src]; //getting the ip address of the source
+            source = addrs[src]; //getting the ip address of the source
             short[] query = queries[i]; //get current query
             int[] adjacency = adjlist[src]; //set adjacency to adjlist of src
             int sameCount = 0;
@@ -98,8 +117,23 @@ public class MyProject implements Project {
         };
         MyProject project = new MyProject();
         int[] x = project.closestInSubnet(adjlist, addrs, 0, queries);
-        System.out.println(x);
         //Expected answer = 0, 1, 0, Integer.MAX_VALUE
+
+        int[][] adjlist1 = new int[][] {
+            { 1 },
+            { 0 },
+        };
+        int y = project.numPaths(adjlist1, 0, 1);
+        System.out.println(y);
+
+        int[][] adjlist2 = new int[][] {
+            { 1, 2 },
+            { 0, 3 },
+            { 0, 3 },
+            { 1, 2 },
+        };
+        int z = project.numPaths(adjlist2, 0, 3);
+        System.out.println("z: "+ z);
 	}
 
 }
