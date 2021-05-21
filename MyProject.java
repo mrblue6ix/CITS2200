@@ -86,19 +86,23 @@ public class MyProject implements Project {
      */
     public int numPaths(int[][] adjlist, int src, int dst) {
         paths = 0; //reset global paths variable to 0 on each call to numPaths
+        count = 0;
         boolean[] visited = new boolean[adjlist.length]; //creating new boolean array to keep track of which vertices have been visited
         printPath(src, dst, visited, adjlist); //calls helper function to do the actual work 
         int ans = paths;
 
+        System.out.println(count);
         return ans;
     }
     private void printPath(int src, int dst, boolean[] visited, int[][] adjlist){
         if(src == dst){
+            count++;
             paths++;
             return;
         }
         visited[src] = true;
         for(int i = 0; i < adjlist[src].length; i++){
+            count++;
             int j = adjlist[src][i];
             if (!visited[j]) {
                 printPath(j, dst, visited, adjlist);
