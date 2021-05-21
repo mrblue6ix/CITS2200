@@ -3,12 +3,46 @@
 
 import java.util.*;
 
+class Edge {
+    public int flow;
+    public final int capacity;
+    public int nodeA;
+    public int nodeB;
+    public Edge residual;
+
+    public Edge(int nodeA, int nodeB, int capacity) {
+        this.nodeA = nodeA;
+        this.nodeB = nodeB;
+        this.capacity = capacity;
+    }
+    
+    public boolean isResidual() {
+        return capacity == 0;
+    }
+
+    public int remainingCapacity() {
+        return capacity - flow;
+    }
+
+    public void augment(int bottleNeck) {
+        flow += bottleNeck;
+        residual.flow -= bottleNeck;
+    }
+}
+
+class Node {
+    Edge[] edges; //the associated edges with a node
+}
+
+
+
 public class MyProject implements Project {
     int paths = 0;
-	
+	int[] level;
+    Node[] graph; 
+
 	public MyProject() {
 		//TODO constructor
-
 	}
 	
     public boolean allDevicesConnected(int[][] adjlist) {
@@ -73,15 +107,118 @@ public class MyProject implements Project {
         visited[src] = false;
     }
 
+    private int[] lGraph(int[][] adjlist, int src) {
+        int D = adjlist.length;
+
+        Queue<Integer> q = new LinkedList<Integer>();
+        boolean[] vis = new boolean[D];
+        int[] shortest = new int[D];
+        for(int i = 0; i < D; i++) {
+            vis[i] = false;
+            shortest[i] = Integer.MAX_VALUE;
+        }
+
+        vis[src] = true;
+        shortest[src] = 0;
+        q.offer(src);
+
+        while(q.poll() != null) {
+            int node = q.poll();
+            int[] neighbours = adjlist[node];
+            for(int i = 0; i <neighbours.length; i++) {
+                if(!vis[i]) {
+                    q.offer(i);
+                    vis[i] = true;
+                    if(shortest[i] < shortest[node] ) {
+                        continue;
+                    }
+                    shortest[i] = shortest[node] + 1;
+                }
+            }
+        }
+
+        return shortest; 
+    }
     public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) { //use BFS?
-        return null;
+        int D = adjlist.length;
+        int Q = queries.length;
+
+        int[] shortest = lGraph(adjlist, src);
+
+        //need to implement an IP/Querie comparison method in N + Q time
+
+        return shortest;         
     }
 
     public int maxDownloadSpeed(int[][] adjlist, int[][] speeds, int src, int dst) {
         // TODO
-        return 0;
-    }
+        int D = adjlist.length;
+        int maxFlow = 0;
+        boolean[] minCut = new boolean[D];
+        Node[] graph = new Node[D];
+        for(int i = 0; i < D; i++) {
+            for(int j = 0; j < adjlist[i].length; j++) {
+                graph[i].edges = new Edge[adjlist[i].length];
+                graph[i].edges[j] = new Edge(i, adjlist[i][j], speeds[i][j]);
+            }
+            minCut[i] = false;            
+        }
+        
+        int[] next = new int[D];
+        level = new int[D];
     
+        while (bfs(src, D)) {
+          Arrays.fill(next, 0);
+          // Find max flow by adding all augmenting path flows.
+          for (long f = dfs(graph, level, src, dst, next, Integer.MAX_VALUE); f != 0; f = dfs(graph, level, src, dst, next, Integer.MAX_VALUE)) {
+            maxFlow += f;
+          }
+        }
+    
+        for (int i = 0; i < D; i++) if (level[i] != -1) minCut[i] = true;
+        
+        
+        return maxFlow;
+    }
+
+    private boolean bfs(int src, int dst) {
+        int D = graph.length;
+        Arrays.fill(level, -1);
+        level[src] = 0;
+        Deque<Integer> q = new ArrayDeque<>(D);
+        q.offer(src);
+        while (!q.isEmpty()) {
+        int node = q.poll();
+            for (Edge edge : graph[node].edges) {
+                long cap = edge.remainingCapacity();
+                if (cap > 0 && level[edge.nodeB] == -1) {
+                    level[edge.nodeB] = level[node] + 1;
+                    q.offer(edge.nodeB);
+                }
+            }
+        }
+    return level[dst] != -1;
+    }
+
+    private long dfs(Node[] graph, int[] level, int at, int dst, int[] next, long flow) {
+        if (at == dst) return flow;
+        final int numEdges = graph[at].edges.length;
+    
+        for (; next[at] < numEdges; next[at]++) {
+          Edge edge = graph[at].get(next[at]);
+          int cap = edge.remainingCapacity();
+          if (cap > 0 && level[edge.nodeB] == level[at] + 1) {
+    
+            int bottleNeck = dfs(edge.nodeB, next, min(flow, cap));
+            if (bottleNeck > 0) {
+              edge.augment(bottleNeck);
+              return bottleNeck;
+            }
+          }
+        }
+        return 0;
+      }
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
         MyProject project = new MyProject();
